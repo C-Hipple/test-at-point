@@ -1,3 +1,20 @@
+;;; test-at-point.el --- Simply run unit tests in compilation mode based on point position -*- lexical-binding: t; -*-
+
+;; Author: Chris Hipple
+;; URL: https://github.com/C-Hippl/test-at-point
+;; Version: 0.1
+;; Package-Requires: ((emacs "25.1")
+
+;; SPDX-License-Identifier: GPL-3.0+
+
+;;; Commentary:
+
+;; This package provides testing tools which let you find the current test at the cursor position regardless of language and immediately run it in a compilation buffer.
+;;
+;; Use (run-test-at-point)
+
+;;; Code:
+
 (defun go-test-command (file-name test-name)
   ;;go test -v -run Test_Serialize
   (concat "go test -v -run " test-name))
@@ -89,3 +106,5 @@
   )
 
 ;; hotkeys
+
+(provide 'test-at-point)
