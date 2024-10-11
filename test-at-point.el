@@ -105,6 +105,6 @@
     )
   )
 
-;; hotkeys
-
 (provide 'test-at-point)
+
+;;; test-at-point.el ends here
