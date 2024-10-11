@@ -3,7 +3,7 @@
 ;; Author: Chris Hipple
 ;; URL: https://github.com/C-Hippl/test-at-point
 ;; Version: 0.1
-;; Package-Requires: ((emacs "25.1")
+;; Package-Requires: ((emacs "25.1"))
 
 ;; SPDX-License-Identifier: GPL-3.0+
 
