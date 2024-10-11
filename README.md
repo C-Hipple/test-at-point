@@ -9,6 +9,8 @@ This package adds some simple functions for allowing you to quickly run individu
 
 Calling `run-test-at-point` will lookup the test at the current point via regular expression searching and then run that only that test via `compile-mode`.
 
+![](https://github.com/C-Hipple/test-at-point/blob/main/media/test-at-point.gif?raw=true)
+
 Add your preferred keybinding to your init.
 
 ```elisp
