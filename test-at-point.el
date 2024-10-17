@@ -1,7 +1,7 @@
 ;;; test-at-point.el --- Simply run unit tests in compilation mode based on point position -*- lexical-binding: t; -*-
 
 ;; Author: Chris Hipple
-;; URL: https://github.com/C-Hippl/test-at-point
+;; URL: https://github.com/C-Hipple/test-at-point
 ;; Version: 0.1
 ;; Package-Requires: ((emacs "25.1"))
 
@@ -40,7 +40,7 @@
         (rustic-mode . rust-test-command)))
 
 
-(setq project-mode-command-overide-alist
+(setq project-mode-command-override-alist
       ;; example with one of my other open source projects
       ;; Setting various rust modes depending on how that emacs is configured.
       '(("diff-lsp" . ((rustic-mode . diff-lsp-test-command)
@@ -52,7 +52,7 @@
   "Runs the test command based on major mode and test name."
   (interactive)
   (let* ((mode-command (cdr (assoc major-mode mode-command-pattern-alist)))
-         (project-overides (cdr (assoc (projectile-project-name) project-mode-command-overide-alist))))
+         (project-overides (cdr (assoc (projectile-project-name) project-mode-command-override-alist))))
     (if project-overides
         (compile (funcall (cdr (assoc major-mode project-overides)) (buffer-file-name) (current-test-at-point)))
       (if mode-command
