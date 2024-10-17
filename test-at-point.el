@@ -23,7 +23,7 @@
         (rustic-mode . rust-test-command)))
 
 
-(setq project-mode-command-overide-alist
+(setq project-mode-command-override-alist
       ;; example with one of my other open source projects
       ;; Setting various rust modes depending on how that emacs is configured.
       '(("diff-lsp" . ((rustic-mode . diff-lsp-test-command),
@@ -35,7 +35,7 @@
   "Runs the test command based on major mode and test name."
   (interactive)
   (let* ((mode-command (cdr (assoc major-mode mode-command-pattern-alist)))
-         (project-overides (cdr (assoc (projectile-project-name) project-mode-command-overide-alist))))
+         (project-overides (cdr (assoc (projectile-project-name) project-mode-command-override-alist))))
     (if project-overides
         (compile (funcall (cdr (assoc major-mode project-overides)) (buffer-file-name) (current-test-at-point)))
       (if mode-command
@@ -89,3 +89,5 @@
   )
 
 ;; hotkeys
+
+(define-key evil-normal-state-map (kbd "SPC c t") 'run-test-at-point)
