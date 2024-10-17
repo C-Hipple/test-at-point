@@ -1,7 +1,7 @@
 ;;; test-at-point.el --- Simply run unit tests in compilation mode based on point position -*- lexical-binding: t; -*-
 
 ;; Author: Chris Hipple
-;; URL: https://github.com/C-Hippl/test-at-point
+;; URL: https://github.com/C-Hipple/test-at-point
 ;; Version: 0.1
 ;; Package-Requires: ((emacs "25.1"))
 
