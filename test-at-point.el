@@ -43,8 +43,8 @@
 (setq project-mode-command-overide-alist
       ;; example with one of my other open source projects
       ;; Setting various rust modes depending on how that emacs is configured.
-      '(("diff-lsp" . ((rustic-mode . diff-lsp-test-command),
-                       (rust-mode . diff-lsp-test-command),
+      '(("diff-lsp" . ((rustic-mode . diff-lsp-test-command)
+                       (rust-mode . diff-lsp-test-command)
                        (rust-ts-mode . diff-lsp-test-command)))))
 
 
