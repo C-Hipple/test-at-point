@@ -15,6 +15,9 @@
 
 ;;; Code:
 
+;; Allow toggling default behavior on always saving all buffers
+(setq test-at-point-pre-save t)
+
 (defun go-test-command (file-name test-name)
   ;;go test -v -run Test_Serialize
   (concat "go test -v -run " test-name))
@@ -51,6 +54,8 @@
 (defun run-test-at-point ()
   "Runs the test command based on major mode and test name."
   (interactive)
+  (when test-at-point-pre-save
+    (save-some-buffers 1))
   (let* ((mode-command (cdr (assoc major-mode mode-command-pattern-alist)))
          (project-overides (cdr (assoc (projectile-project-name) project-mode-command-override-alist))))
     (if project-overides
