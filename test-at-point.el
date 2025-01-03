@@ -27,8 +27,6 @@
 (defun rust-test-command (file-name test-name)
   (concat "cargo test " test-name))
 
-(defun diff-lsp-test-command (file-name test-name)
-  (concat "RUST_BACKTRACE=1 cargo test " test-name))
 
 (setq mode-command-pattern-alist
       '((go-mode . go-test-command)
@@ -40,6 +38,9 @@
         (rustic-mode . rust-test-command)))
 
 
+(defun diff-lsp-test-command (file-name test-name)
+  (concat "RUST_BACKTRACE=1 cargo test " test-name))
+
 (setq project-mode-command-override-alist
       ;; example with one of my other open source projects
       ;; Setting various rust modes depending on how that emacs is configured.
@@ -47,7 +48,7 @@
                        (rust-mode . diff-lsp-test-command)
                        (rust-ts-mode . diff-lsp-test-command)))))
 
-
+;;;###autoload
 (defun run-test-at-point ()
   "Runs the test command based on major mode and test name."
   (interactive)
