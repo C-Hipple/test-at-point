@@ -2,9 +2,9 @@
 
 # -- Project information
 
-project = 'Lumache'
-copyright = '2021, Graziella'
-author = 'Graziella'
+project = 'test-at-point.el'
+copyright = '2024+ Hipple'
+author = 'C-Hipple'
 
 release = '0.1'
 version = '0.1.0'
