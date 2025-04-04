@@ -5,6 +5,7 @@ Emacs Package for easily sending unit tests to compile-mode
 This package adds some simple functions for allowing you to quickly run individual unit tests across a variety of major-modes using compile mode.
 
 
+
 ## Usage
 
 Calling `run-test-at-point` will lookup the test at the current point via regular expression searching and then run that only that test via `compile-mode`.
@@ -36,6 +37,9 @@ dotspacemacs-additional-packages '(
 )
 ```
 
+## Full Docs:
+
+https://test-at-point.readthedocs.io/en/latest/
 
 ## Extending functionality
 
@@ -46,7 +50,7 @@ Currently only python, go, and rust are supported.  To add more languages add va
 
 ## Setting custom test command functions
 
-A lot of larger projects will have custom tooling or specific commands which need to be used in order to run tests.  
+A lot of larger projects will have custom tooling or specific commands which need to be used in order to run tests.
 
 In the below example we override the rust test command builder to always use the environment variable as RUST_BACKTRACE=1.
 
@@ -63,5 +67,3 @@ In the below example we override the rust test command builder to always use the
                        (rust-mode . diff-lsp-test-command),
                        (rust-ts-mode . diff-lsp-test-command)))))
 ```
-
-

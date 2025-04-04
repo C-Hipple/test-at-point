@@ -4,10 +4,36 @@ build:
   os: "ubuntu-22.04"
   tools:
     python: "3.10"
+  jobs:
+    pre_build:
+      - pip install --upgrade pip
+    post_build:
+      - echo "Build completed successfully"
 
 python:
   install:
     - requirements: docs/requirements.txt
+    - method: pip
+    - path: .
 
 sphinx:
   configuration: docs/source/conf.py
+  builder: html
+  fail_on_warning: true
+
+formats:
+  - pdf
+  - epub
+
+submodules:
+  include:
+    - all
+  recursive: true
+
+build:
+  image: latest
+  apt_packages:
+    - graphviz
+    - texlive-latex-recommended
+    - texlive-fonts-recommended
+    - texlive-latex-extra
