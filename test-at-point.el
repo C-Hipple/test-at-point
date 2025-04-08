@@ -2,7 +2,7 @@
 
 ;; Author: Chris Hipple
 ;; URL: https://github.com/C-Hipple/test-at-point
-;; Version: 0.1
+;; Version: 1.0
 ;; Package-Requires: ((emacs "25.1"))
 
 ;; SPDX-License-Identifier: GPL-3.0+
@@ -13,14 +13,22 @@
 ;;
 ;; Use (run-test-at-point)
 
+;; You can also incrementally add tests (of the same type) to a minibuffer and run all of them with 1 command
+
+;; use (test-at-point-select-test)
+;; then (test-at-point-run-selected)
+
 ;;; Code:
 
 ;; Allow toggling default behavior on always saving all buffers
 (setq test-at-point-pre-save t)
 
+
 (defun go-test-command (file-name test-name)
-  ;;go test -v -run Test_Serialize
-  (concat "go test -v -run " test-name))
+  (concat "go test -v ./... -run "
+          (if (listp test-name)
+              (mapconcat 'identity (mapcar (lambda (x) (regexp-quote x)) test-name) "\\|")
+            (regexp-quote test-name))))
 
 (defun py-test-command (file-name test-name)
   ;;pytest test_main.py::test_add
@@ -99,12 +107,13 @@
 
 
 (defun call-current-test-at-point ()
-  ;; lil helper to debug
+  ;; Debugging helper
   (interactive)
   (let ((res (current-test-at-point)))
     (message (concat "Found above test: " res ))))
 
 (defun call-get-pattern-by-mode()
+  ;; Debugging helper
   (interactive)
   (let ((res (get-pattern-by-mode)))
     (message (concat "Found the pattern: " res))
