@@ -1,4 +1,4 @@
-(defun add-current-test-at-point-to-buffer ()
+(defun select-current-test-at-point ()
   "Adds the result of `current-test-at-point' to the *test-at-point-selections* buffer."
   (interactive)
   (let ((test-string (current-test-at-point)))
@@ -8,7 +8,7 @@
       (insert "\n"))))
 
 
-(defun remove-current-test-at-point-from-buffer ()
+(defun unselect-current-test-at-point ()
   "Removes the result of `current-test-at-point' from the *test-at-point-selections* buffer."
   (interactive)
   (let ((test-string (current-test-at-point)))
@@ -52,11 +52,11 @@
     (if project-overides
         (compile (funcall (cdr (assoc major-mode project-overides)) (buffer-file-name) tests))
       (if mode-command
-          (compile (funcall mode-command (buffer-file-name) tests)))
+          (let ((default-directory (project-root (project-current t))))
+            (compile (funcall mode-command (buffer-file-name) tests))))
       (message "No command found for %s mode" major-mode))))
 
 (defun buffer-lines-as-list (&optional buffer)
-  (interactive)
   (with-current-buffer (or buffer (current-buffer))
     (let ((lines nil)
           (start (point-min))
