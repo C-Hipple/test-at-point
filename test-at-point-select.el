@@ -1,10 +1,13 @@
 (defun select-current-test-at-point ()
   "Adds the result of `current-test-at-point' to the *test-at-point-selections* buffer."
   (interactive)
-  (let ((test-string (current-test-at-point)))
+  (let ((test-identifier (current-test-at-point)))
+    (message (concat "test: " (cdr test-identifier)))
+    (message (concat "file: " ( car test-identifier)))
     (with-current-buffer (get-buffer-create "*test-at-point-selections*")
       (goto-char (point-max))
-      (insert test-string)
+      (message (concat "Adding test: " (cdr test-identifier)))
+      (insert (tap--make-test-string test-identifier))
       (insert "\n"))))
 
 
@@ -63,9 +66,22 @@
           (end (point-max)))
       (goto-char start)
       (while (< (point) end)
-        (push (buffer-substring (line-beginning-position) (line-end-position)) lines)
+        (push (tap--parse-test-line (buffer-substring (line-beginning-position) (line-end-position))) lines)
         (forward-line))
       (nreverse lines))))
 
 
+(defun tap--parse-test-line (input-line)
+  "split the line and return cons cell with (file-name . test-name) for test runners which need the test-name"
+  (let ((space-pos (string-match " " input-line)))
+    (if space-pos
+        (let ((car-part (substring input-line 0 space-pos))
+              (cdr-part (substring input-line (1+ space-pos))))
+          (cons car-part cdr-part))
+      nil)))
+
 (define-key evil-normal-state-map (kbd "SPC c T") 'test-at-point-run-selected)
+
+(defun tap--make-test-string (test-identifier)
+  "formats the test-identifier cons cell to a string stored in buffer"
+  (concat (car test-identifier) " " (cdr test-identifier)))

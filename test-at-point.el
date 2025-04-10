@@ -24,19 +24,26 @@
 (setq test-at-point-pre-save t)
 
 
-(defun go-test-command (file-name test-name)
+(defun go-test-command (test-identifier)
+  "test-identifer is a cons cell of ('file-name.go' . 'test-name') or it's a list of concells"
+  (message (prin1-to-string test-identifier))
   (concat "go test -v ./... -run "
-          (if (listp test-name)
-              (mapconcat 'identity (mapcar (lambda (x) (regexp-quote x)) test-name) "\\|")
-            (regexp-quote test-name))))
+          (if (length> test-identifier 1)
+              (progn
+                (message "is list")
+                (mapconcat 'identity (map (lambda (x) (regexp-quote x)) (cdr test-identifier)) "\\|"))
+            (progn
+              (message "here")
+              (message (cdr test-identifier))
+              (regexp-quote (cdr test-identifier))))))
 
-(defun py-test-command (file-name test-name)
+(defun py-test-command (file-name test-)
   ;;pytest test_main.py::test_add
   ;;pytest -k test_add
-  (concat "pytest -k " test-name))
+  (concat "pytest -k " test-))
 
-(defun rust-test-command (file-name test-name)
-  (concat "cargo test " test-name))
+(defun rust-test-command (file-name test-)
+  (concat "cargo test " test-))
 
 
 (setq mode-command-pattern-alist
@@ -49,8 +56,8 @@
         (rustic-mode . rust-test-command)))
 
 
-(defun diff-lsp-test-command (file-name test-name)
-  (concat "RUST_BACKTRACE=1 cargo test " test-name))
+(defun diff-lsp-test-command (file-name test-)
+  (concat "RUST_BACKTRACE=1 cargo test " test-))
 
 (setq project-mode-command-override-alist
       ;; example with one of my other open source projects
@@ -70,8 +77,10 @@
     (if project-overides
         (compile (funcall (cdr (assoc major-mode project-overides)) (buffer-file-name) (current-test-at-point)))
       (if mode-command
-          (compile (funcall mode-command (buffer-file-name) (current-test-at-point))))
-      (message "No command found for %s mode" major-mode))))
+          (progn
+            (message (cdr (current-test-at-point)))
+            (compile (funcall mode-command (current-test-at-point))))
+        (message "No command found for %s mode" major-mode)))))
 
 
 (setq mode-test-pattern-alist
@@ -92,25 +101,33 @@
 
 
 (defun current-test-at-point ()
+  "returns a cons cell of (file-name . test-)"
   (let ((my-line (thing-at-point 'line))
         (pattern (get-pattern-by-mode))
-        (result nil))
+        (found-test nil))
     (if (string-match pattern my-line)
-        (setq result (match-string 1 my-line))
+        (setq found-test (match-string 1 my-line))
       (save-excursion
-        (while (and (re-search-backward pattern nil t 1) (not result))
+        (while (and (re-search-backward pattern nil t 1) (not found-test))
           (beginning-of-line)
           (let ((this-line (thing-at-point 'line)))
             (when (string-match pattern this-line)
-              (setq result (match-string 1 this-line)))))))
-    result))
+              (setq found-test (match-string 1 this-line)))))))
+    (create-test-cons-cell found-test)))
+
+
+(defun create-test-cons-cell (test-)
+  "takes the test string that was found and builds the cons cell using the relative project path."
+  (cons (replace-regexp-in-string (projectile-project-root) "" (buffer-file-name)) test-))
 
 
 (defun call-current-test-at-point ()
   ;; Debugging helper
   (interactive)
   (let ((res (current-test-at-point)))
-    (message (concat "Found above test: " res ))))
+    (message (concat "Found above test: " (cdr res)))
+    (message (concat "in the file: " (car res)))
+    ))
 
 (defun call-get-pattern-by-mode()
   ;; Debugging helper
