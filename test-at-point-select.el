@@ -56,17 +56,17 @@
         (compile (funcall (cdr (assoc major-mode project-overides)) (buffer-file-name) tests))
       (if mode-command
           (let ((default-directory (project-root (project-current t))))
-            (compile (funcall mode-command (buffer-file-name) tests))))
+            (compile (funcall mode-command tests))))
       (message "No command found for %s mode" major-mode))))
 
 (defun buffer-lines-as-list (&optional buffer)
   (with-current-buffer (or buffer (current-buffer))
-    (let ((lines nil)
+    (let ((lines '())
           (start (point-min))
           (end (point-max)))
       (goto-char start)
       (while (< (point) end)
-        (push (tap--parse-test-line (buffer-substring (line-beginning-position) (line-end-position))) lines)
+        (push (tap--parse-test-line (buffer-substring-no-properties (line-beginning-position) (line-end-position))) lines)
         (forward-line))
       (nreverse lines))))
 

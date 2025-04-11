@@ -26,16 +26,19 @@
 
 (defun go-test-command (test-identifier)
   "test-identifer is a cons cell of ('file-name.go' . 'test-name') or it's a list of concells"
+  (message (concat "type of input: " (prin1-to-string (type-of test-identifier))))
   (message (prin1-to-string test-identifier))
+  ;; (message (concat "length: " (length test-identifier)))
+  (message "starting")
   (concat "go test -v ./... -run "
-          (if (length> test-identifier 1)
+          (if (tap-is-single-cons-cell test-identifier)
               (progn
-                (message "is list")
-                (mapconcat 'identity (map (lambda (x) (regexp-quote x)) (cdr test-identifier)) "\\|"))
+                (message "here")
+                (message (regexp-quote (prin1-to-string (car test-identifier))))
+                (regexp-quote (cdr test-identifier)))
             (progn
-              (message "here")
-              (message (cdr test-identifier))
-              (regexp-quote (cdr test-identifier))))))
+              (message "is list")
+              (mapconcat 'identity (map 'list (lambda (x) (cdr x)) test-identifier) "\\|")))))
 
 (defun py-test-command (file-name test-)
   ;;pytest test_main.py::test_add
@@ -101,7 +104,7 @@
 
 
 (defun current-test-at-point ()
-  "returns a cons cell of (file-name . test-)"
+  "returns a cons cell of (file-name . test-name) using pattern by mode"
   (let ((my-line (thing-at-point 'line))
         (pattern (get-pattern-by-mode))
         (found-test nil))
@@ -110,7 +113,8 @@
       (save-excursion
         (while (and (re-search-backward pattern nil t 1) (not found-test))
           (beginning-of-line)
-          (let ((this-line (thing-at-point 'line)))
+          (let (
+                (this-line (buffer-substring-no-properties (line-beginning-position) (line-end-position))))
             (when (string-match pattern this-line)
               (setq found-test (match-string 1 this-line)))))))
     (create-test-cons-cell found-test)))
@@ -136,6 +140,11 @@
     (message (concat "Found the pattern: " res))
     )
   )
+
+(defun tap-is-single-cons-cell (variable)
+  "Check if VARIABLE is a single cons cell (cdr is not a cons)."
+  (and (consp variable)
+       (not (consp (cdr variable)))))
 
 (provide 'test-at-point)
 
