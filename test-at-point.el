@@ -26,27 +26,19 @@
 
 (defun go-test-command (test-identifier)
   "test-identifer is a cons cell of ('file-name.go' . 'test-name') or it's a list of concells"
-  (message (concat "type of input: " (prin1-to-string (type-of test-identifier))))
-  (message (prin1-to-string test-identifier))
-  ;; (message (concat "length: " (length test-identifier)))
   (message "starting")
   (concat "go test -v ./... -run "
           (if (tap-is-single-cons-cell test-identifier)
-              (progn
-                (message "here")
-                (message (regexp-quote (prin1-to-string (car test-identifier))))
-                (regexp-quote (cdr test-identifier)))
-            (progn
-              (message "is list")
-              (mapconcat 'identity (map 'list (lambda (x) (cdr x)) test-identifier) "\\|")))))
+              (cdr test-identifier)
+            (mapconcat 'identity (map 'list (lambda (x) (cdr x)) test-identifier) "\\|"))))
 
-(defun py-test-command (file-name test-)
+(defun py-test-command (file-name test-name)
   ;;pytest test_main.py::test_add
   ;;pytest -k test_add
-  (concat "pytest -k " test-))
+  (concat "pytest -k " test-name))
 
-(defun rust-test-command (file-name test-)
-  (concat "cargo test " test-))
+(defun rust-test-command (file-name test-name)
+  (concat "cargo test " test-name))
 
 
 (setq mode-command-pattern-alist
@@ -80,9 +72,7 @@
     (if project-overides
         (compile (funcall (cdr (assoc major-mode project-overides)) (buffer-file-name) (current-test-at-point)))
       (if mode-command
-          (progn
-            (message (cdr (current-test-at-point)))
-            (compile (funcall mode-command (current-test-at-point))))
+          (compile (funcall mode-command (current-test-at-point)))
         (message "No command found for %s mode" major-mode)))))
 
 
@@ -144,7 +134,7 @@
 (defun tap-is-single-cons-cell (variable)
   "Check if VARIABLE is a single cons cell (cdr is not a cons)."
   (and (consp variable)
-       (not (consp (cdr variable)))))
+       (not (consp (car variable)))))
 
 (provide 'test-at-point)
 

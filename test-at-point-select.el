@@ -1,9 +1,11 @@
+;;;###autoload
 (defun select-current-test-at-point ()
   "Adds the result of `current-test-at-point' to the *test-at-point-selections* buffer."
   (interactive)
   (let ((test-identifier (current-test-at-point)))
+    (message (prin1-to-string (type-of test-identifier)))
+    (message (concat "file: " (car test-identifier)))
     (message (concat "test: " (cdr test-identifier)))
-    (message (concat "file: " ( car test-identifier)))
     (with-current-buffer (get-buffer-create "*test-at-point-selections*")
       (goto-char (point-max))
       (message (concat "Adding test: " (cdr test-identifier)))
@@ -11,27 +13,11 @@
       (insert "\n"))))
 
 
-(defun unselect-current-test-at-point ()
-  "Removes the result of `current-test-at-point' from the *test-at-point-selections* buffer."
-  (interactive)
-  (let ((test-string (current-test-at-point)))
-    (with-current-buffer (get-buffer "*test-at-point-selections*")
-      (goto-char (point-min))
-      (while (not (eobp))
-        (let ((line-start (point)))
-          (forward-line 1)
-          (let ((line-end (point))
-                (line (buffer-substring-no-properties line-start line-end)))
-            (when (string= (string-trim line) test-string)
-              (delete-region line-start line-end)
-              (goto-char (point-min)) ; Restart search from beginning
-              )))))))
-
-
+;;;###autoload
 (defun remove-current-test-at-point-from-buffer ()
   "Removes the result of `current-test-at-point' from the *test-at-point-selections* buffer."
   (interactive)
-  (let ((test-string (current-test-at-point)))
+  (let ((test-string (tap--make-test-string (current-test-at-point))))
     (with-current-buffer (get-buffer "*test-at-point-selections*")
       (when (buffer-live-p (current-buffer))
         (goto-char (point-min))
@@ -45,7 +31,7 @@
                 (goto-char (point-min)) ; Restart search from beginning
                 (forward-line 0))))))))) ; Ensure forward-line doesn't move unnecessarily
 
-
+;;;###autoload
 (defun test-at-point-run-selected ()
   (interactive)
   (let* ((tests (with-current-buffer "*test-at-point-selections*"
@@ -80,8 +66,9 @@
           (cons car-part cdr-part))
       nil)))
 
-(define-key evil-normal-state-map (kbd "SPC c T") 'test-at-point-run-selected)
 
 (defun tap--make-test-string (test-identifier)
   "formats the test-identifier cons cell to a string stored in buffer"
   (concat (car test-identifier) " " (cdr test-identifier)))
+
+(setq debug-on-error 't)

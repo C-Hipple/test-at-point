@@ -67,3 +67,14 @@ In the below example we override the rust test command builder to always use the
                        (rust-mode . diff-lsp-test-command),
                        (rust-ts-mode . diff-lsp-test-command)))))
 ```
+
+Personally I set all of my keybindings for compiling as `spc c <keybind>`
+
+This package does not set any keybinds by default.
+
+```elisp
+(define-key evil-normal-state-map (kbd "SPC c t") 'run-test-at-point)
+(define-key evil-normal-state-map (kbd "SPC c a") 'select-current-test-at-point)
+(define-key evil-normal-state-map (kbd "SPC c T") 'test-at-point-run-selected)
+(define-key evil-normal-state-map (kbd "SPC c u") 'remove-current-test-at-point-from-buffer)
+```
