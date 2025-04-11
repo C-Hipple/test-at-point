@@ -70,7 +70,7 @@
   (let* ((mode-command (cdr (assoc major-mode mode-command-pattern-alist)))
          (project-overides (cdr (assoc (projectile-project-name) project-mode-command-override-alist))))
     (if project-overides
-        (compile (funcall (cdr (assoc major-mode project-overides)) (buffer-file-name) (current-test-at-point)))
+        (compile (funcall (cdr (assoc major-mode project-overides)) (current-test-at-point)))
       (if mode-command
           (compile (funcall mode-command (current-test-at-point)))
         (message "No command found for %s mode" major-mode)))))

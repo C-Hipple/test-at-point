@@ -39,7 +39,7 @@
          (mode-command (cdr (assoc major-mode mode-command-pattern-alist)))
          (project-overides (cdr (assoc (projectile-project-name) project-mode-command-override-alist))))
     (if project-overides
-        (compile (funcall (cdr (assoc major-mode project-overides)) (buffer-file-name) tests))
+        (compile (funcall (cdr (assoc major-mode project-overides)) tests))
       (if mode-command
           (let ((default-directory (project-root (project-current t))))
             (compile (funcall mode-command tests))))
