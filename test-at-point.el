@@ -2,7 +2,7 @@
 
 ;; Author: Chris Hipple
 ;; URL: https://github.com/C-Hipple/test-at-point
-;; Version: 0.1
+;; Version: 1.0
 ;; Package-Requires: ((emacs "25.1"))
 
 ;; SPDX-License-Identifier: GPL-3.0+
@@ -13,14 +13,24 @@
 ;;
 ;; Use (run-test-at-point)
 
+;; You can also incrementally add tests (of the same type) to a minibuffer and run all of them with 1 command
+
+;; use (test-at-point-select-test)
+;; then (test-at-point-run-selected)
+
 ;;; Code:
 
 ;; Allow toggling default behavior on always saving all buffers
 (setq test-at-point-pre-save t)
 
-(defun go-test-command (file-name test-name)
-  ;;go test -v -run Test_Serialize
-  (concat "go test -v -run " test-name))
+
+(defun go-test-command (test-identifier)
+  "test-identifer is a cons cell of ('file-name.go' . 'test-name') or it's a list of concells"
+  (message "starting")
+  (concat "go test -v ./... -run "
+          (if (tap-is-single-cons-cell test-identifier)
+              (cdr test-identifier)
+            (mapconcat 'identity (map 'list (lambda (x) (cdr x)) test-identifier) "\\|"))))
 
 (defun py-test-command (file-name test-name)
   ;;pytest test_main.py::test_add
@@ -41,8 +51,8 @@
         (rustic-mode . rust-test-command)))
 
 
-(defun diff-lsp-test-command (file-name test-name)
-  (concat "RUST_BACKTRACE=1 cargo test " test-name))
+(defun diff-lsp-test-command (file-name test-)
+  (concat "RUST_BACKTRACE=1 cargo test " test-))
 
 (setq project-mode-command-override-alist
       ;; example with one of my other open source projects
@@ -60,10 +70,10 @@
   (let* ((mode-command (cdr (assoc major-mode mode-command-pattern-alist)))
          (project-overides (cdr (assoc (projectile-project-name) project-mode-command-override-alist))))
     (if project-overides
-        (compile (funcall (cdr (assoc major-mode project-overides)) (buffer-file-name) (current-test-at-point)))
+        (compile (funcall (cdr (assoc major-mode project-overides)) (current-test-at-point)))
       (if mode-command
-          (compile (funcall mode-command (buffer-file-name) (current-test-at-point))))
-      (message "No command found for %s mode" major-mode))))
+          (compile (funcall mode-command (current-test-at-point)))
+        (message "No command found for %s mode" major-mode)))))
 
 
 (setq mode-test-pattern-alist
@@ -84,32 +94,47 @@
 
 
 (defun current-test-at-point ()
+  "returns a cons cell of (file-name . test-name) using pattern by mode"
   (let ((my-line (thing-at-point 'line))
         (pattern (get-pattern-by-mode))
-        (result nil))
+        (found-test nil))
     (if (string-match pattern my-line)
-        (setq result (match-string 1 my-line))
+        (setq found-test (match-string 1 my-line))
       (save-excursion
-        (while (and (re-search-backward pattern nil t 1) (not result))
+        (while (and (re-search-backward pattern nil t 1) (not found-test))
           (beginning-of-line)
-          (let ((this-line (thing-at-point 'line)))
+          (let (
+                (this-line (buffer-substring-no-properties (line-beginning-position) (line-end-position))))
             (when (string-match pattern this-line)
-              (setq result (match-string 1 this-line)))))))
-    result))
+              (setq found-test (match-string 1 this-line)))))))
+    (create-test-cons-cell found-test)))
+
+
+(defun create-test-cons-cell (test-)
+  "takes the test string that was found and builds the cons cell using the relative project path."
+  (cons (replace-regexp-in-string (projectile-project-root) "" (buffer-file-name)) test-))
 
 
 (defun call-current-test-at-point ()
-  ;; lil helper to debug
+  ;; Debugging helper
   (interactive)
   (let ((res (current-test-at-point)))
-    (message (concat "Found above test: " res ))))
+    (message (concat "Found above test: " (cdr res)))
+    (message (concat "in the file: " (car res)))
+    ))
 
 (defun call-get-pattern-by-mode()
+  ;; Debugging helper
   (interactive)
   (let ((res (get-pattern-by-mode)))
     (message (concat "Found the pattern: " res))
     )
   )
+
+(defun tap-is-single-cons-cell (variable)
+  "Check if VARIABLE is a single cons cell (cdr is not a cons)."
+  (and (consp variable)
+       (not (consp (car variable)))))
 
 (provide 'test-at-point)
 
