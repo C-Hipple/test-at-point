@@ -81,7 +81,7 @@ Association list mapping major modes to their test command functions.
 
 Association list for project-specific test command overrides.
 
-Test Command Functions
+Built-in Test Command Functions
 --------------------
 
 ``go-test-command``
@@ -89,24 +89,24 @@ Test Command Functions
 
 .. code-block:: elisp
 
-   (go-test-command file-name test-name)
+   (go-test-command test-identifier)
 
-Returns the Go test command string.
+Returns the Go test command string, where test-identifier is a cons cell with the (file-name . test-name)
 
 ``py-test-command``
 ~~~~~~~~~~~~~~~~~
 
 .. code-block:: elisp
 
-   (py-test-command file-name test-name)
+   (py-test-command test-identifier)
 
-Returns the Python test command string.
+Returns the Python test command string, where test-identifier is a cons cell with the (file-name . test-name)
 
 ``rust-test-command``
 ~~~~~~~~~~~~~~~~~~
 
 .. code-block:: elisp
 
-   (rust-test-command file-name test-name)
+   (rust-test-command test-identifier)
 
-Returns the Rust test command string. 
+Returns the Rust test command string, where test-identifier is a cons cell with the (file-name . test-name) 

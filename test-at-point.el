@@ -32,13 +32,13 @@
               (cdr test-identifier)
             (mapconcat 'identity (map 'list (lambda (x) (cdr x)) test-identifier) "\\|"))))
 
-(defun py-test-command (file-name test-name)
+(defun py-test-command (test-identifier)
   ;;pytest test_main.py::test_add
   ;;pytest -k test_add
-  (concat "pytest -k " test-name))
+  (concat "pytest -k " (cdr test-identifier)))
 
-(defun rust-test-command (file-name test-name)
-  (concat "cargo test " test-name))
+(defun rust-test-command (test-identifier)
+  (concat "cargo test " (cdr test-identifier)))
 
 
 (setq mode-command-pattern-alist

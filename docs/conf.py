@@ -7,7 +7,7 @@ copyright = '2024+ Hipple'
 author = 'C-Hipple'
 
 release = '0.1'
-version = '0.1.0'
+version = '1.0'
 
 # -- General configuration
 

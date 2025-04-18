@@ -9,7 +9,7 @@ The following variables can be set in your Emacs configuration:
 ``test-at-point-pre-save``
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Controls whether buffers are automatically saved before running tests.
+Controls whether all buffers are automatically saved before running tests.
 
 .. code-block:: elisp
 
@@ -76,7 +76,7 @@ Adding Support for New Languages
 To add support for a new language, you need to:
 
 1. Define a test pattern in ``mode-test-pattern-alist``
-2. Define a test command function
+2. Define a test command function.  The interface for the test function is that it should take a cons cell of (file-name . test-name).  It should return a string of the full test command as a string.
 3. Add the mode and command to ``mode-command-pattern-alist``
 
 Example for a new language:
