@@ -70,5 +70,3 @@
 (defun tap--make-test-string (test-identifier)
   "formats the test-identifier cons cell to a string stored in buffer"
   (concat (car test-identifier) " " (cdr test-identifier)))
-
-(setq debug-on-error 't)
