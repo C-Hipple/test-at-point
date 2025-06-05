@@ -2,7 +2,7 @@
 
 ;; Author: Chris Hipple
 ;; URL: https://github.com/C-Hipple/test-at-point
-;; Version: 1.0
+;; Version: 1.0.1
 ;; Package-Requires: ((emacs "25.1"))
 
 ;; SPDX-License-Identifier: GPL-3.0+
@@ -51,8 +51,8 @@
         (rustic-mode . rust-test-command)))
 
 
-(defun diff-lsp-test-command (file-name test-)
-  (concat "RUST_BACKTRACE=1 cargo test " test-))
+(defun diff-lsp-test-command (test-identifier)
+  (concat "cargo test " (cdr test-identifier)))
 
 (setq project-mode-command-override-alist
       ;; example with one of my other open source projects
