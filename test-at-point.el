@@ -42,7 +42,7 @@
 
 (defun ts-test-command (test-identifier)
   "for now run the full file"
-  (format "yarn run test -t %s --testPathPattern %s"  (cdr test-identifier) (file-name-nondirectory buffer-file-name)))
+  (format "yarn run test -t \'%s\' --testPathPattern %s"  (cdr test-identifier) (file-name-nondirectory buffer-file-name)))
 
 
 (setq mode-command-pattern-alist
@@ -86,8 +86,8 @@
 
 (setq mode-test-pattern-alist
       '(
-        (go-mode . "^func \\(Test_[a-zA-Z0-9_+]+\\)")
-        (go-ts-mode . "^func \\(Test_[a-zA-Z0-9_+]+\\)")
+        (go-mode . "^func \\(Test\\(_?\\)[a-zA-Z0-9_+]+\\)")
+        (go-ts-mode . "^func \\(Test\\(_?\\)[a-zA-Z0-9_+]+\\)")
         (python-mode . "^def \\([a-zA-Z0-9_]+\\)")
         (python-ts-mode . "^def \\([a-zA-Z0-9_]+\\)")
         (rust-mode . "fn \\(test_[a-zA-Z0-9_+]+\\)")
