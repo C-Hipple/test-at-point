@@ -41,7 +41,8 @@
   (concat "cargo test " (cdr test-identifier)))
 
 (defun ts-test-command (test-identifier)
-  (concat "yarn test " (car test-identifier) " -t '" (cdr test-identifier) "'"))
+  "for now run the full file"
+  (concat "yarn run test --testPathPattern "  (file-name-nondirectory buffer-file-name)))
 
 
 (setq mode-command-pattern-alist
@@ -90,8 +91,8 @@
         (rust-mode . "fn \\(test_[a-zA-Z0-9_+]+\\)")
         (rust-ts-mode . "fn \\(test_[a-zA-Z0-9_+]+\\)")
         (rustic-mode . "fn \\(test_[a-zA-Z0-9_+]+\\)")
-        (typescript-mode . "(?:it\\|test)\s-.*['\"]\\([^'\"]+\\)['\"]")
-        (typescript-ts-mode . "(?:it\\|test)\s-.*['\"]\\([^'\"]+\\)['\"]")))
+        (typescript-tsx-mode . "(?:it\\|test)\s-.*['\"]\\([^'\"]+\\)['\"]")
+        (typescript-tsx-ts-mode . "(?:it\\|test)\s-.*['\"]\\([^'\"]+\\)['\"]")))
 
 (defun get-pattern-by-mode ()
   (interactive)
