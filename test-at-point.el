@@ -42,7 +42,7 @@
 
 (defun ts-test-command (test-identifier)
   "for now run the full file"
-  (concat "yarn run test --testPathPattern "  (file-name-nondirectory buffer-file-name)))
+  (format "yarn run test -t %s --testPathPattern %s"  (cdr test-identifier) (file-name-nondirectory buffer-file-name)))
 
 
 (setq mode-command-pattern-alist
@@ -53,7 +53,8 @@
         (rust-ts-mode . rust-test-command)
         (rust-mode . rust-test-command)
         (typescript-mode . ts-test-command)
-        (typescript-ts-mode . ts-test-command)
+        (typescript-tsx-mode . ts-test-command)
+        (typescript-tsx-ts-mode . ts-test-command)
         (rustic-mode . rust-test-command)))
 
 
@@ -74,9 +75,10 @@
   (when test-at-point-pre-save
     (save-some-buffers 1))
   (let* ((mode-command (cdr (assoc major-mode mode-command-pattern-alist)))
-         (project-overides (cdr (assoc (projectile-project-name) project-mode-command-override-alist))))
-    (if project-overides
-        (compile (funcall (cdr (assoc major-mode project-overides)) (current-test-at-point)))
+         (project-overides (cdr (assoc (projectile-project-name) project-mode-command-override-alist)))
+         (project-mode-command (and project-overides (cdr (assoc major-mode project-overides)))))
+    (if project-mode-command
+        (compile (funcall project-mode-command (current-test-at-point)))
       (if mode-command
           (compile (funcall mode-command (current-test-at-point)))
         (message "No command found for %s mode" major-mode)))))
@@ -91,8 +93,9 @@
         (rust-mode . "fn \\(test_[a-zA-Z0-9_+]+\\)")
         (rust-ts-mode . "fn \\(test_[a-zA-Z0-9_+]+\\)")
         (rustic-mode . "fn \\(test_[a-zA-Z0-9_+]+\\)")
-        (typescript-tsx-mode . "(?:it\\|test)\s-.*['\"]\\([^'\"]+\\)['\"]")
-        (typescript-tsx-ts-mode . "(?:it\\|test)\s-.*['\"]\\([^'\"]+\\)['\"]")))
+        (typescript-mode . "\\(?:it\\|test\\)\\s-*(\\s-*['\"]\\([^'\"]+\\)['\"]")
+        (typescript-tsx-mode . "\\(?:it\\|test\\)\\s-*(\\s-*['\"]\\([^'\"]+\\)['\"]")
+        (typescript-tsx-ts-mode . "\\(?:it\\|test\\)\\s-*(\\s-*['\"]\\([^'\"]+\\)['\"]")))
 
 (defun get-pattern-by-mode ()
   (interactive)
