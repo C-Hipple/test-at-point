@@ -2,7 +2,7 @@
 
 ;; Author: Chris Hipple
 ;; URL: https://github.com/C-Hipple/test-at-point
-;; Version: 1.0.1
+;; Version: 1.0.2
 ;; Package-Requires: ((emacs "25.1"))
 
 ;; SPDX-License-Identifier: GPL-3.0+
@@ -40,6 +40,9 @@
 (defun rust-test-command (test-identifier)
   (concat "cargo test " (cdr test-identifier)))
 
+(defun ts-test-command (test-identifier)
+  (concat "yarn test " (car test-identifier) " -t '" (cdr test-identifier) "'"))
+
 
 (setq mode-command-pattern-alist
       '((go-mode . go-test-command)
@@ -48,6 +51,8 @@
         (python-ts-mode . py-test-command)
         (rust-ts-mode . rust-test-command)
         (rust-mode . rust-test-command)
+        (typescript-mode . ts-test-command)
+        (typescript-ts-mode . ts-test-command)
         (rustic-mode . rust-test-command)))
 
 
@@ -84,7 +89,9 @@
         (python-ts-mode . "^def \\([a-zA-Z0-9_]+\\)")
         (rust-mode . "fn \\(test_[a-zA-Z0-9_+]+\\)")
         (rust-ts-mode . "fn \\(test_[a-zA-Z0-9_+]+\\)")
-        (rustic-mode . "fn \\(test_[a-zA-Z0-9_+]+\\)")))
+        (rustic-mode . "fn \\(test_[a-zA-Z0-9_+]+\\)")
+        (typescript-mode . "(?:it\\|test)\s-.*['\"]\\([^'\"]+\\)['\"]")
+        (typescript-ts-mode . "(?:it\\|test)\s-.*['\"]\\([^'\"]+\\)['\"]")))
 
 (defun get-pattern-by-mode ()
   (interactive)
