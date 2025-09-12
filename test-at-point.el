@@ -41,7 +41,7 @@
   (concat "cargo test " (cdr test-identifier)))
 
 (defun ts-test-command (test-identifier)
-  "for now run the full file"
+  "TODO: allow setting yarn vs npm vs npx?"
   (format "yarn run test -t \'%s\' --testPathPattern %s"  (cdr test-identifier) (file-name-nondirectory buffer-file-name)))
 
 
