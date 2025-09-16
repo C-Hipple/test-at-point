@@ -2,7 +2,7 @@
 
 ;; Author: Chris Hipple
 ;; URL: https://github.com/C-Hipple/test-at-point
-;; Version: 1.0.2
+;; Version: 1.0.3
 ;; Package-Requires: ((emacs "25.1"))
 
 ;; SPDX-License-Identifier: GPL-3.0+
@@ -53,6 +53,7 @@
         (rust-ts-mode . rust-test-command)
         (rust-mode . rust-test-command)
         (typescript-mode . ts-test-command)
+        (typescript-ts-mode . ts-test-command)
         (typescript-tsx-mode . ts-test-command)
         (typescript-tsx-ts-mode . ts-test-command)
         (rustic-mode . rust-test-command)))
@@ -94,6 +95,7 @@
         (rust-ts-mode . "fn \\(test_[a-zA-Z0-9_+]+\\)")
         (rustic-mode . "fn \\(test_[a-zA-Z0-9_+]+\\)")
         (typescript-mode . "\\(?:it\\|test\\)\\s-*(\\s-*['\"]\\([^'\"]+\\)['\"]")
+        (typescript-ts-mode . "\\(?:it\\|test\\)\\s-*(\\s-*['\"]\\([^'\"]+\\)['\"]")
         (typescript-tsx-mode . "\\(?:it\\|test\\)\\s-*(\\s-*['\"]\\([^'\"]+\\)['\"]")
         (typescript-tsx-ts-mode . "\\(?:it\\|test\\)\\s-*(\\s-*['\"]\\([^'\"]+\\)['\"]")))
 
