@@ -2,7 +2,7 @@
 
 ;; Author: Chris Hipple
 ;; URL: https://github.com/C-Hipple/test-at-point
-;; Version: 1.0.3
+;; Version: 1.0.4
 ;; Package-Requires: ((emacs "25.1"))
 
 ;; SPDX-License-Identifier: GPL-3.0+
@@ -11,12 +11,15 @@
 
 ;; This package provides testing tools which let you find the current test at the cursor position regardless of language and immediately run it in a compilation buffer.
 ;;
-;; Use (run-test-at-point)
+;; Use (run-test-at-point) to run a single test at point
 
-;; You can also incrementally add tests (of the same type) to a minibuffer and run all of them with 1 command
-
-;; use (test-at-point-select-test)
-;; then (test-at-point-run-selected)
+;; You can also incrementally add tests (of the same type) to a buffer and run all of them with 1 command (Go and Python only):
+;;
+;; (select-current-test-at-point) - Add test to selection
+;; (remove-current-test-at-point-from-buffer) - Remove test from selection
+;; (test-at-point-show-selected) - Show selected tests
+;; (test-at-point-clear-selected) - Clear all selected tests
+;; (test-at-point-run-selected) - Run all selected tests
 
 ;;; Code:
 
@@ -33,9 +36,15 @@
             (mapconcat 'identity (map 'list (lambda (x) (cdr x)) test-identifier) "\\|"))))
 
 (defun py-test-command (test-identifier)
-  ;;pytest test_main.py::test_add
-  ;;pytest -k test_add
-  (concat "pytest -k " (cdr test-identifier)))
+  "test-identifier is a cons cell of ('file-name.py' . 'test-name') or it's a list of cons cells"
+  (if (tap-is-single-cons-cell test-identifier)
+      ;; Single test: pytest -k test_add
+      (concat "pytest -k " (cdr test-identifier))
+    ;; Multiple tests: pytest tests/test_module1.py::test_thing tests/test_module2.py::test_other
+    (concat "pytest "
+            (mapconcat 'identity
+                       (mapcar (lambda (x) (concat (car x) "::" (cdr x))) test-identifier)
+                       " "))))
 
 (defun rust-test-command (test-identifier)
   (concat "cargo test " (cdr test-identifier)))
